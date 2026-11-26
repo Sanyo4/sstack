@@ -1,0 +1,13 @@
+{
+  "name": "sstack",
+  "owner": {
+    "name": "S Stack"
+  },
+  "plugins": [
+    {
+      "name": "sstack",
+      "source": "./",
+      "description": "How I build with agents: fix the class, prove it, break it, ship it, route by model."
+    }
+  ]
+}

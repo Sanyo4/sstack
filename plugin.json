@@ -1,0 +1,8 @@
+{
+  "name": "sstack",
+  "displayName": "S Stack",
+  "version": "1.0.0",
+  "description": "How I build with agents: fix the class, prove it, break it, ship it, route by model.",
+  "author": "S Stack",
+  "license": "MIT"
+}
