@@ -37,10 +37,10 @@ Every dispatch starts with the role's section from `roles.md` in this folder, pa
 
 | Runtime | How |
 |---|---|
-| T3 Code, any vendor | `delegate_task` with the row's target below and its `role`. A child runs one role; it cannot start roles of its own, so a whole feature never goes to `delegate_task` (see below). Read `orchestrator_capabilities` once before the first cross-vendor dispatch of a session, and never use a model ID it does not list. A Claude role at the session's own model and effort may use the native `Agent` call instead |
+| T3 Code, any vendor | `delegate_task` with the row's target below and its `role`, with `isolation: "worktree"` when the role needs its own checkout (a builder, a break-it seat). A child runs one role; a whole feature never goes to `delegate_task` (see below). Read `orchestrator_capabilities` once before the first cross-vendor dispatch of a session, and never use a model ID it does not list. A Claude role at the session's own model and effort may use the native `Agent` call instead |
 | Claude Code, outside T3 | `Agent` with `subagent_type: "general-purpose"` and `model` set to `opus`, `sonnet`, `haiku` or `fable`. `isolation: "worktree"` for a separate checkout. The native call cannot set effort, so say in the report that the role ran at the default effort. A Gemini row falls back to its Claude fallback |
 | Antigravity, outside T3 | `invoke_subagent` with `TypeName: "self"`, `Role` set to the role's name, and `Prompt` starting with the role's sections from `roles.md`. No `Model`: S Stack ships no Antigravity agent files. `Workspace: "branch"` for a separate checkout. Every role runs on the session's model and level; say so in the report |
-| Antigravity inside T3 | always `delegate_task`. A native subagent there cannot write or run commands |
+| Antigravity inside T3 | every role through `delegate_task`, never a native subagent, which cannot write or run commands there. A whole task still starts as its own thread (see below) |
 
 | Role | `delegate_task` target | `role` | Claude Code fallback | Antigravity fallback |
 |---|---|---|---|---|
@@ -53,7 +53,7 @@ Every dispatch starts with the role's section from `roles.md` in this folder, pa
 | runner | the Haiku target | `test` | `haiku` | the session |
 | architect | `{"providerInstanceId":"claudeAgent","model":"claude-fable-5-2","options":{"effort":"high"}}` | `design` | `fable` | the session |
 
-A whole task (a feature, a fix that ships its own PR, or a task handed to another runtime by the `s-mode` skill's step 0) is a session of its own that leads S Stack: it routes its roles, runs break-it and ships. In T3, start it with `t3_thread_launch`, with its own worktree, on that runtime's provider, and the full brief. Outside T3, ask the user to open a thread on that runtime. A delegated child or a native subagent cannot do this, because it cannot start roles of its own.
+A whole task (a feature, a fix that ships its own PR, or a task handed to another runtime by the `s-mode` skill's step 0) is a session of its own that leads S Stack: it routes its roles, runs break-it and ships. In T3, start it with `t3_thread_launch` and `workspaceStrategy` `{ type: "worktree", baseRef: "origin/<default branch>", startFromOrigin: true }`; set `modelSelection` (read `orchestrator_capabilities` first) only to change runtime or model. This rule is the user's standing request for a new thread for each whole task, which T3 asks for before it opens one. The brief carries the chosen runtime, so the new thread does not ask again at `s-mode` step 0. Outside T3, ask the user to open a thread on that runtime. A delegated child is the wrong home for a whole task: in T3 a child never watches a PR, so it cannot ship, and the user cannot talk to it.
 
 ## Effort
 
