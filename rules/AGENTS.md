@@ -53,6 +53,7 @@ Retries, re-reads, test runs, pushes to your own branch, merges that pass the `s
 - Split independent work as wide as the machine allows, and run related tests freely while you work.
 - Run the repo's full check as a background command, so a long run does not use up a tool timeout. Keep to the Check slots setting.
 - Branch each PR off the default branch, side by side. A PR that builds on another open PR waits as the `ship` skill's "Several PRs" says.
+- Each parallel session that ships a PR is a top-level session that runs S Stack itself. In T3 Code, start it with `t3_thread_launch` and its own worktree. A delegated child or subagent runs one role only: a builder for one change, a reviewer, a runner, copy or research. The `routing` skill says how.
 - Brief each session with its own branch, any numbers it must use, the files other sessions touch, and a report path. For a fix, add the invariant and the close-the-loop rule.
 - A report that leaves a path of the same invariant open goes back to its session. Anything else found on the way goes to the repo's backlog.
 - Merge PRs in the order they finish. After each merge, sync the other open branches with the default branch and run their checks again.
